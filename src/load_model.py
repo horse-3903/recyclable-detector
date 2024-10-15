@@ -18,7 +18,7 @@ while True:
         break
 
     # Run the YOLO model on the frame
-    results = model.predict(source=frame)
+    results = model.predict(source=frame, conf=0.5, verbose=False)
 
     # Draw the bounding boxes and labels on the frame
     annotated_frame = results[0].plot()

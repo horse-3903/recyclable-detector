@@ -1,0 +1,13 @@
+train: ../train/images
+val: ../valid/images
+test: ../test/images
+
+nc: 7
+names: ['cardboard', 'glass', 'materials', 'metal', 'paper', 'plastic', 'trash']
+
+roboflow:
+  workspace: recycling-detector
+  project: recyclables-and-garbage-detection
+  version: 4
+  license: MIT
+  url: https://universe.roboflow.com/recycling-detector/recyclables-and-garbage-detection/dataset/4

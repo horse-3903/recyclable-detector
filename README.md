@@ -1,92 +1,63 @@
-# Recycling Detector
+<div align="center">
 
-This project is a **Recycling Detector** that uses YOLOv8 to detect and classify different types of materials used in recyclable and non-recyclable items. The model is trained to identify **seven** different material types: cardboard, glass, materials, metal, paper, plastic, and trash.
+# recyclable-detector
 
-## Project Structure
+Real-time recyclable material detection using YOLOv8
 
-The dataset is divided into training, validation, and testing sets:
+[![Python](https://img.shields.io/badge/Python-3776AB?style=flat-square&logo=python&logoColor=white)](https://python.org)
+[![License](https://img.shields.io/github/license/horse-3903/recyclable-detector?style=flat-square)](LICENSE)
+[![Last Commit](https://img.shields.io/github/last-commit/horse-3903/recyclable-detector?style=flat-square)](../../commits)
+[![Stars](https://img.shields.io/github/stars/horse-3903/recyclable-detector?style=flat-square)](../../stargazers)
 
-- **Training Images:** `../train/images`
-- **Validation Images:** `../valid/images`
-- **Testing Images:** `../test/images`
+</div>
 
-### Classes
-The model is trained on the following seven classes:
+---
 
-1. `cardboard`
-2. `glass`
-3. `materials`
-4. `metal`
-5. `paper`
-6. `plastic`
-7. `trash`
+## Overview
 
-## Dataset Information
+`recyclable-detector` is a YOLOv8-based object detection system that classifies materials in real time through a webcam feed or on static images. Trained on the Roboflow [Recyclables and Garbage Detection](https://universe.roboflow.com/recycling-detector/recyclables-and-garbage-detection/dataset/4) dataset, it identifies seven material categories to help automate recyclability decisions at the point of disposal.
 
-The dataset for training and evaluation is sourced from Roboflow's **Recyclables and Garbage Detection** project.
+## Features
 
-- **Roboflow Workspace:** [recycling-detector](https://universe.roboflow.com/recycling-detector/recyclables-and-garbage-detection)
-- **Project:** Recyclables and Garbage Detection
-- **Version:** 4
-- **License:** MIT
-- **Dataset URL:** [Link to Dataset](https://universe.roboflow.com/recycling-detector/recyclables-and-garbage-detection/dataset/4)
+- **7-class material detection** — cardboard, glass, metal, paper, plastic, trash, and mixed materials
+- **Real-time webcam inference** — live bounding boxes with confidence scores at 50% threshold
+- **Static image/video prediction** — run inference on any file path
+- **Model evaluation** — validate on the held-out test set for mAP metrics
+
+## Tech Stack
+
+[![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
+[![YOLOv8](https://img.shields.io/badge/YOLOv8-00FFFF?style=for-the-badge&logo=ultralytics&logoColor=black)](https://docs.ultralytics.com)
+[![OpenCV](https://img.shields.io/badge/OpenCV-5C3EE8?style=for-the-badge&logo=opencv&logoColor=white)](https://opencv.org)
 
 ## Getting Started
 
 ### Prerequisites
 
-To run the recycling detector, you will need the following:
-
-- **Python 3.8+**
-- **YOLOv8** (from `ultralytics`)
-- **OpenCV** for video capturing and image processing
+- Python 3.8+
+- Webcam (for live detection)
 
 ### Installation
 
-1. Clone the repository:
-
-   ```bash
-   git clone https://github.com/your-repo/recycling-detector.git
-   ```
-
-2. Install the required dependencies:
-
-   ```bash
-   pip install ultralytics opencv-python
-   ```
-
-3. Download the dataset from Roboflow and place the images in their respective folders (`../train/images`, `../valid/images`, and `../test/images`).
-
-### Model Training
-
-To train the YOLOv8 model, use the following command:
-
 ```bash
-from ultralytics import YOLO
-
-# Load your custom YOLOv8 model configuration
-model = YOLO("yolov8n.yaml")
-
-# Train the model
-model.train(data="path/to/your/data.yaml", epochs=100)
+git clone https://github.com/horse-3903/recyclable-detector.git
+cd recyclable-detector
+pip install ultralytics opencv-python
 ```
 
-Make sure to update the `data.yaml` file with the correct paths to the dataset.
+### Real-Time Detection (Webcam)
 
-### Running the Model
+```bash
+python src/video_predict.py
+```
 
-Once the model is trained, you can use it for real-time material detection through your webcam or on a set of images.
-
-Here’s a sample code to run the detector on a webcam:
+Press `q` to quit the live feed window.
 
 ```python
 import cv2
 from ultralytics import YOLO
 
-# Load the trained YOLOv8 model
-model = YOLO("./runs/detect/exp/weights/best.pt")  # Replace with your trained model path
-
-# Open the webcam
+model = YOLO("./src/model.pt")
 cap = cv2.VideoCapture(0)
 
 while True:
@@ -94,46 +65,65 @@ while True:
     if not ret:
         break
 
-    # Run inference
-    results = model.predict(source=frame)
-
-    # Annotate the frame with bounding boxes
+    results = model.predict(source=frame, conf=0.5, verbose=False)
     annotated_frame = results[0].plot()
+    cv2.imshow("Recyclable Detector", annotated_frame)
 
-    # Display the annotated frame
-    cv2.imshow('Recycling Detector', annotated_frame)
-
-    # Break on 'q' key press
-    if cv2.waitKey(1) & 0xFF == ord('q'):
+    if cv2.waitKey(1) & 0xFF == ord("q"):
         break
 
-# Release the webcam and close the window
 cap.release()
 cv2.destroyAllWindows()
 ```
 
-### Testing the Model
+### Static Image Prediction
 
-To test the model on the test dataset, use the following command:
+```python
+from ultralytics import YOLO
 
-```bash
-# Load the trained model and run it on the test set
-results = model.val(data="path/to/your/data.yaml")
+model = YOLO("./src/model.pt")
+results = model.predict(source="path/to/image.jpg", conf=0.5)
+results[0].show()
 ```
 
-## Results
+### Model Training
 
-After training, the model will output metrics such as **mAP (mean Average Precision)** to evaluate its performance on the test data. The predictions will include bounding boxes around detected materials along with the confidence score for each classification.
+```python
+from ultralytics import YOLO
+
+model = YOLO("yolov8n.yaml")
+model.train(data="path/to/data.yaml", epochs=100)
+```
+
+Download the dataset from Roboflow and update the paths in `data.yaml` before training.
+
+### Model Evaluation
+
+```python
+from ultralytics import YOLO
+
+model = YOLO("./src/model.pt")
+metrics = model.val(data="path/to/data.yaml")
+print(metrics.box.map)   # mAP50-95
+```
+
+## Class Labels
+
+| ID | Label | Description |
+|----|-------|-------------|
+| 0 | `cardboard` | Cardboard boxes and packaging |
+| 1 | `glass` | Glass bottles and jars |
+| 2 | `materials` | Mixed/other recyclable materials |
+| 3 | `metal` | Cans and metal objects |
+| 4 | `paper` | Paper and newspapers |
+| 5 | `plastic` | Plastic bottles and containers |
+| 6 | `trash` | Non-recyclable waste |
+
+## Dataset
+
+- **Source:** [Roboflow — Recyclables and Garbage Detection v4](https://universe.roboflow.com/recycling-detector/recyclables-and-garbage-detection/dataset/4)
+- **License:** MIT
 
 ## License
 
-This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
-
-## Acknowledgments
-
-- The dataset is sourced from Roboflow's **Recyclables and Garbage Detection** project.
-- YOLOv8 by [Ultralytics](https://github.com/ultralytics/ultralytics).
-
----
-
-Feel free to modify and adapt this project to suit your needs!
+MIT — see [LICENSE](LICENSE)

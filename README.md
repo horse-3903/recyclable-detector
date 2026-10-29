@@ -19,10 +19,10 @@ Real-time recyclable material detection using YOLOv8
 
 ## Features
 
-- **7-class material detection** — cardboard, glass, metal, paper, plastic, trash, and mixed materials
-- **Real-time webcam inference** — live bounding boxes with confidence scores at 50% threshold
-- **Static image/video prediction** — run inference on any file path
-- **Model evaluation** — validate on the held-out test set for mAP metrics
+- **7-class material detection**: cardboard, glass, metal, paper, plastic, trash, and mixed materials
+- **Real-time webcam inference**: live bounding boxes with confidence scores at 50% threshold
+- **Static image/video prediction**: run inference on any file path
+- **Model evaluation**: validate on the held-out test set for mAP metrics
 
 ## Tech Stack
 
@@ -121,9 +121,9 @@ print(metrics.box.map)   # mAP50-95
 
 ## Dataset
 
-- **Source:** [Roboflow — Recyclables and Garbage Detection v4](https://universe.roboflow.com/recycling-detector/recyclables-and-garbage-detection/dataset/4)
+- **Source:** [Roboflow: Recyclables and Garbage Detection v4](https://universe.roboflow.com/recycling-detector/recyclables-and-garbage-detection/dataset/4)
 - **License:** MIT
 
 ## License
 
-MIT — see [LICENSE](LICENSE)
+MIT: see [LICENSE](LICENSE)
